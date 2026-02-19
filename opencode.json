@@ -1,0 +1,15 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mode": {
+    "synthesis": {
+      "permission": {
+        "task": "allow",
+        "read": "allow",
+        "write": "allow",
+        "bash": "allow",
+        "feishu-mcp": "allow",
+        "external_directory": "allow"
+      }
+    }
+  }
+}
