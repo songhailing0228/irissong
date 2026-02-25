@@ -1,5 +1,5 @@
 import { Form, Input, Button, Card, Typography, Space, Radio, Upload, message } from 'antd';
-import { MinusCircleOutlined, PlusOutlined, InboxOutlined } from '@ant-design/icons';
+import { MinusCircleOutlined, PlusOutlined, InboxOutlined, UploadOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -9,9 +9,26 @@ const { Title } = Typography;
 const { Dragger } = Upload;
 
 const CreateReview = () => {
+  const [form] = Form.useForm();
   const navigate = useNavigate();
   const { user } = useAuth();
   const [docSource, setDocSource] = useState('feishu');
+
+  const handleRefFileUpload = async (file, fieldIndex) => {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await axios.post('http://localhost:5001/api/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      const refs = form.getFieldValue('referenceDocs') || [];
+      refs[fieldIndex] = { ...refs[fieldIndex], url: res.data.relativePath };
+      form.setFieldsValue({ referenceDocs: refs });
+      message.success(`${file.name} uploaded`);
+    } catch (err) {
+      message.error('File upload failed');
+    }
+  };
 
   const onFinish = async (values) => {
     try {
@@ -24,7 +41,7 @@ const CreateReview = () => {
         formData.append('file', file);
 
         try {
-            const uploadRes = await axios.post('http://localhost:5000/api/upload', formData, {
+            const uploadRes = await axios.post('http://localhost:5001/api/upload', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
@@ -42,7 +59,7 @@ const CreateReview = () => {
       }
 
       // 1. Create Session
-      const sessionRes = await axios.post('http://localhost:5000/api/sessions', {
+      const sessionRes = await axios.post('http://localhost:5001/api/sessions', {
         title: values.title,
         description: values.description,
         docUrl: finalDocUrl,
@@ -57,7 +74,7 @@ const CreateReview = () => {
       // 2. Create Requirements
       if (values.requirements && values.requirements.length > 0) {
         await Promise.all(values.requirements.map(req => 
-          axios.post('http://localhost:5000/api/requirements', {
+          axios.post('http://localhost:5001/api/requirements', {
             session: sessionId,
             description: req.description,
             priority: req.priority || 'medium'
@@ -80,7 +97,7 @@ const CreateReview = () => {
 
   return (
     <Card title="Create New BRD Review">
-      <Form onFinish={onFinish} layout="vertical" initialValues={{ docSource: 'feishu' }}>
+      <Form form={form} onFinish={onFinish} layout="vertical" initialValues={{ docSource: 'feishu' }}>
         <Form.Item name="title" label="Title" rules={[{ required: true }]}>
           <Input />
         </Form.Item>
@@ -133,11 +150,18 @@ const CreateReview = () => {
                   <Form.Item
                     {...restField}
                     name={[name, 'url']}
-                    rules={[{ required: true, message: 'Missing URL' }]}
+                    rules={[{ required: true, message: 'Missing URL or file' }]}
                     style={{ flex: 2, marginBottom: 0 }}
                   >
-                    <Input placeholder="Doc URL (https://...)" />
+                    <Input placeholder="Doc URL or upload a file →" />
                   </Form.Item>
+                  <Upload
+                    showUploadList={false}
+                    beforeUpload={(file) => { handleRefFileUpload(file, name); return false; }}
+                    accept=".pdf,.md,.txt,.doc,.docx,.xlsx,.xls"
+                  >
+                    <Button icon={<UploadOutlined />} style={{ marginTop: 0 }} />
+                  </Upload>
                   <Form.Item
                     {...restField}
                     name={[name, 'note']}

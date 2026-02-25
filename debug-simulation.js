@@ -58,7 +58,7 @@ const opencode = spawn('npx', [
   '-y', 
   'opencode-ai', 
   'run', 
-  '--model', 'Mify-OpenAI/azure_openai/gpt-5.1-codex',
+  '--model', process.env.MODEL_NAME || 'moonshot-v1-128k',
   '--agent', 'synthesis', 
   prompt, 
   '--print-logs', 
@@ -69,8 +69,8 @@ const opencode = spawn('npx', [
     ...process.env, 
     FORCE_COLOR: '1', 
     PATH: process.env.PATH,
-    OPENAI_API_KEY: process.env.OPENAI_API_KEY || 'sk-AJ0tfVgVly8piXIUVk3UocKhlH5qg80cyLa7Mlx5OFye7oJ2',
-    OPENAI_BASE_URL: process.env.OPENAI_BASE_URL || 'http://model.mify.ai.srv/v1/'
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+    OPENAI_BASE_URL: process.env.OPENAI_BASE_URL
   },
   stdio: 'inherit' 
 });

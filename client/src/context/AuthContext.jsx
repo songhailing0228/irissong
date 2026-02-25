@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (name, role, country) => {
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/login', { name, role, country });
+      const res = await axios.post('http://localhost:5001/api/auth/login', { name, role, country });
       setUser(res.data);
       localStorage.setItem('user', JSON.stringify(res.data));
       return true;

@@ -26,6 +26,7 @@ router.put('/:id/approve', async (req, res) => {
   try {
     const { userId, status, comment } = req.body;
     const requirement = await Requirement.findById(req.params.id);
+    if (!requirement) return res.status(404).json({ error: 'Requirement not found' });
     
     const existingIndex = requirement.approvals.findIndex(a => a.user.toString() === userId);
     if (existingIndex > -1) {
@@ -33,8 +34,15 @@ router.put('/:id/approve', async (req, res) => {
     } else {
       requirement.approvals.push({ user: userId, status, comment });
     }
+
+    // Update main status based on approvals
+    requirement.status = status;
     
     await requirement.save();
+
+    const io = req.app.get('io');
+    if (io) io.emit('requirement-updated', requirement);
+
     res.json(requirement);
   } catch (err) {
     res.status(500).json({ error: err.message });

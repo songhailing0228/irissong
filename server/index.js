@@ -15,7 +15,7 @@ app.use(express.json());
 // Socket.io Setup
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173", // Vite default port
+    origin: ["http://localhost:5173", "http://localhost:5174", "http://localhost:5175", "http://localhost:5176"], // Allow multiple Vite ports
     methods: ["GET", "POST"]
   }
 });
@@ -26,6 +26,11 @@ io.on('connection', (socket) => {
   socket.on('join-session', (sessionId) => {
     socket.join(sessionId);
     console.log(`User ${socket.id} joined session ${sessionId}`);
+  });
+
+  socket.on('send-comment', (comment) => {
+    console.log('Broadcasting comment to session:', comment.session);
+    socket.to(comment.session).emit('new-comment', comment);
   });
 
   socket.on('disconnect', () => {
@@ -45,6 +50,7 @@ const requirementRoutes = require('./routes/requirements');
 const commentRoutes = require('./routes/comments');
 const simulationRoutes = require('./routes/simulation');
 const uploadRoutes = require('./routes/upload');
+
 
 // Make io accessible to routes
 app.set('io', io);

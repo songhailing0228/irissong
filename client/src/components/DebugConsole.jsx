@@ -56,13 +56,15 @@ const DebugConsole = ({ socket }) => {
             <Button type="text" size="small" icon={<UpOutlined />} onClick={() => setExpanded(true)} />
           )
         }
-        bodyStyle={{ 
-          display: expanded ? 'block' : 'none',
-          padding: 0,
-          height: 300,
-          background: '#1e1e1e'
+        styles={{ 
+          body: {
+            display: expanded ? 'block' : 'none',
+            padding: 0,
+            height: 300,
+            background: '#1e1e1e'
+          },
+          header: { background: '#f0f0f0' }
         }}
-        headStyle={{ background: '#f0f0f0' }}
       >
         <div ref={scrollRef} style={{ 
           height: '100%', 

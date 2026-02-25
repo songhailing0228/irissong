@@ -14,14 +14,17 @@
   "type": "commonjs",
   "dependencies": {
     "axios": "^1.13.5",
+    "canvas": "^3.2.1",
     "cors": "^2.8.6",
     "dotenv": "^17.2.4",
     "express": "^5.2.1",
     "mongoose": "^9.2.1",
     "multer": "^2.0.2",
     "openai": "^6.21.0",
-    "pdf-parse": "^2.4.5",
-    "socket.io": "^4.8.3"
+    "pdf-parse": "^1.1.1",
+    "pdfjs-dist": "^3.11.174",
+    "socket.io": "^4.8.3",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "nodemon": "^3.1.11"

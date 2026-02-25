@@ -15,6 +15,12 @@ const ReviewSessionSchema = new mongoose.Schema({
     default: 'draft' 
   },
   participants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  simulationReport: {
+    summary: { type: mongoose.Schema.Types.Mixed },
+    finalReport: { type: String },
+    agents: [{ type: mongoose.Schema.Types.Mixed }],
+    savedAt: { type: Date },
+  },
   createdAt: { type: Date, default: Date.now }
 }, { timestamps: true });
 

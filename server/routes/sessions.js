@@ -14,9 +14,14 @@ router.post('/', async (req, res) => {
 
 router.get('/', async (req, res) => {
   try {
-    const sessions = await ReviewSession.find()
+    const { userId } = req.query;
+    const filter = userId
+      ? { $or: [{ owner: userId }, { participants: userId }] }
+      : {};
+    const sessions = await ReviewSession.find(filter)
       .populate('owner', 'name')
-      .populate('participants', 'name');
+      .populate('participants', 'name')
+      .sort({ createdAt: -1 });
     res.json(sessions);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -33,6 +38,43 @@ router.get('/:id', async (req, res) => {
       .populate('participants');
     if (!session) return res.status(404).json({ error: 'Session not found' });
     res.json(session);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.put('/:id', async (req, res) => {
+  try {
+    const session = await ReviewSession.findByIdAndUpdate(req.params.id, req.body, { new: true })
+      .populate('owner', 'name');
+    if (!session) return res.status(404).json({ error: 'Session not found' });
+    res.json(session);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Save simulation report
+router.put('/:id/report', async (req, res) => {
+  try {
+    const { summary, finalReport, agents } = req.body;
+    const session = await ReviewSession.findByIdAndUpdate(
+      req.params.id,
+      { simulationReport: { summary, finalReport, agents, savedAt: new Date() } },
+      { new: true }
+    );
+    if (!session) return res.status(404).json({ error: 'Session not found' });
+    res.json({ message: 'Report saved', savedAt: session.simulationReport.savedAt });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.delete('/:id', async (req, res) => {
+  try {
+    const session = await ReviewSession.findByIdAndDelete(req.params.id);
+    if (!session) return res.status(404).json({ error: 'Session not found' });
+    res.json({ message: 'Deleted' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
