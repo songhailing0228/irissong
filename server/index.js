@@ -50,7 +50,7 @@ const requirementRoutes = require('./routes/requirements');
 const commentRoutes = require('./routes/comments');
 const simulationRoutes = require('./routes/simulation');
 const uploadRoutes = require('./routes/upload');
-
+const scoringRoutes = require('./routes/scoring');
 
 // Make io accessible to routes
 app.set('io', io);
@@ -61,6 +61,7 @@ app.use('/api/requirements', requirementRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/simulation', simulationRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/scoring', scoringRoutes);
 
 app.get('/', (req, res) => {
   res.send('BRD Review API Running');

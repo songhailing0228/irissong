@@ -21,6 +21,14 @@ const ReviewSessionSchema = new mongoose.Schema({
     agents: [{ type: mongoose.Schema.Types.Mixed }],
     savedAt: { type: Date },
   },
+  scoringResults: {
+    overallScore: { type: Number },
+    passLine: { type: Number },
+    passed: { type: Boolean },
+    sections: [{ type: String }],
+    reviewers: [{ type: mongoose.Schema.Types.Mixed }],
+    savedAt: { type: Date },
+  },
   createdAt: { type: Date, default: Date.now }
 }, { timestamps: true });
 

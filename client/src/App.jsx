@@ -5,6 +5,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import CreateReview from './pages/CreateReview';
 import ReviewRoom from './pages/ReviewRoom';
+import ReviewChallenge from './pages/ReviewChallenge';
 
 import ErrorBoundary from './components/ErrorBoundary';
 
@@ -38,6 +39,11 @@ function App() {
               <Route path="review/:id" element={
                 <ProtectedRoute>
                   <ReviewRoom />
+                </ProtectedRoute>
+              } />
+              <Route path="review-challenge/:id" element={
+                <ProtectedRoute>
+                  <ReviewChallenge />
                 </ProtectedRoute>
               } />
             </Route>

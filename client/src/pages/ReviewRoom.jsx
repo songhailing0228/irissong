@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Row, Col, Card, Button, Typography, Tag, Input, Avatar, Space, message, Spin, Tooltip } from 'antd';
-import { CheckOutlined, CloseOutlined, SendOutlined, PlayCircleOutlined, ReloadOutlined, FileTextOutlined, LoadingOutlined, StopOutlined, TeamOutlined, EyeOutlined } from '@ant-design/icons';
+import { CheckOutlined, CloseOutlined, SendOutlined, PlayCircleOutlined, ReloadOutlined, FileTextOutlined, LoadingOutlined, StopOutlined, TeamOutlined, EyeOutlined, TrophyOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import io from 'socket.io-client';
@@ -25,6 +25,7 @@ const AGENT_META = {
 
 const ReviewRoom = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const [session, setSession] = useState(null);
   const [error, setError] = useState(null);
@@ -462,6 +463,20 @@ const ReviewRoom = () => {
                   >
                     保存评审报告
                   </Button>
+                  {simulationAgents.length > 0 && (
+                    <Button
+                      type="primary"
+                      icon={<TrophyOutlined />}
+                      style={{ borderRadius: 8, height: 36, background: 'linear-gradient(135deg, #faad14, #fa8c16)', borderColor: 'transparent' }}
+                      onClick={() => {
+                        const agentsStr = encodeURIComponent(JSON.stringify(simulationAgents));
+                        const docUrlStr = encodeURIComponent(session?.docUrl || '');
+                        navigate(`/review-challenge/${id}?docUrl=${docUrlStr}&agents=${agentsStr}`);
+                      }}
+                    >
+                      评审挑战 — AI 评分 & 挑战
+                    </Button>
+                  )}
                 </div>
               )}
             </div>

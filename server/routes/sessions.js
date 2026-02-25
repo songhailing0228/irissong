@@ -70,6 +70,22 @@ router.put('/:id/report', async (req, res) => {
   }
 });
 
+// Save scoring results
+router.put('/:id/scoring', async (req, res) => {
+  try {
+    const { overallScore, passLine, passed, sections, reviewers } = req.body;
+    const session = await ReviewSession.findByIdAndUpdate(
+      req.params.id,
+      { scoringResults: { overallScore, passLine, passed, sections, reviewers, savedAt: new Date() } },
+      { new: true }
+    );
+    if (!session) return res.status(404).json({ error: 'Session not found' });
+    res.json({ message: 'Scoring saved', savedAt: session.scoringResults.savedAt });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.delete('/:id', async (req, res) => {
   try {
     const session = await ReviewSession.findByIdAndDelete(req.params.id);
